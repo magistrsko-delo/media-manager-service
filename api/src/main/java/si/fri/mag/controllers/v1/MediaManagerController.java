@@ -2,6 +2,7 @@ package si.fri.mag.controllers.v1;
 
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
+import si.fri.DTO.requests.NewMediaResponseData;
 import si.fri.mag.MediaManagerService;
 import si.fri.mag.controllers.MainController;
 
@@ -33,9 +34,8 @@ public class MediaManagerController extends MainController {
             @FormDataParam("mediaName") String mediaName
     ) {
 
-        boolean uploadResponse = mediaManagerService.uploadAndCreateMedia(mediaStream, mediaDetails, siteName, mediaName);
-
-        return this.responseOk("", "ok");
+        NewMediaResponseData newMedia = mediaManagerService.uploadAndCreateMedia(mediaStream, mediaDetails, siteName, mediaName);
+        return this.responseOk("", newMedia);
     }
 
     @DELETE

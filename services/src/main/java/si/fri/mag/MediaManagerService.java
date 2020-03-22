@@ -3,8 +3,12 @@ package si.fri.mag;
 import org.apache.commons.io.FileUtils;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.mp4parser.IsoFile;
+import si.fri.DTO.NewMediaMetadata;
+import si.fri.DTO.requests.NewMediaResponseData;
+import si.fri.mag.utils.RequestSenderService;
 
 import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
 import javax.ws.rs.InternalServerErrorException;
 import java.io.File;
 import java.io.IOException;
@@ -13,29 +17,37 @@ import java.io.InputStream;
 @RequestScoped
 public class MediaManagerService {
 
+    @Inject
+    private RequestSenderService requestSenderService;
 
-    public boolean uploadAndCreateMedia(InputStream uploadedInputStream, FormDataContentDisposition mediaDetails,
+    public NewMediaResponseData uploadAndCreateMedia(InputStream uploadedInputStream, FormDataContentDisposition mediaDetails,
                                         String siteName, String mediaName)  {
 
-        System.out.println("MEDIA name: " + mediaDetails.getName());
-        System.out.println("MEDIA fileName: " + mediaDetails.getFileName());
-        System.out.println("MEDIA type: " + mediaDetails.getType());
-        System.out.println("MEDIA size: " + mediaDetails.getSize());
-        System.out.println("MEDIA parameters: " + mediaDetails.getParameters());
+        Integer mediaLength = 0;
+        File media = new File(mediaDetails.getFileName());
         try {
-            File file = new File(mediaDetails.getFileName());
-            System.out.println("Input stream: " + uploadedInputStream.available());
-            FileUtils.copyInputStreamToFile(uploadedInputStream, file);
+            FileUtils.copyInputStreamToFile(uploadedInputStream, media);
 
             IsoFile isoFile = new IsoFile(mediaDetails.getFileName());
-            double lengthInSeconds = (double) isoFile.getMovieBox().getMovieHeaderBox().getDuration() / isoFile.getMovieBox().getMovieHeaderBox().getTimescale();
-            System.out.println("Media length: " + lengthInSeconds);
+            double lengthInSeconds = (int)((double) isoFile.getMovieBox().getMovieHeaderBox().getDuration() / isoFile.getMovieBox().getMovieHeaderBox().getTimescale());
+            mediaLength = new Double(lengthInSeconds).intValue();
         } catch (IOException e) {
             throw new InternalServerErrorException(e.getMessage());
         }
 
+        String bucketName = requestSenderService.createNewBucketForMedia(mediaName.toLowerCase().replaceAll("\\s+","-"));
+        requestSenderService.sendMediaToUploadOnS3(media, bucketName, mediaDetails.getFileName());
 
-        return true;
+        if(media.delete()){
+            System.out.println("File was not deleted!");
+        }
+
+        // CREATE NEW MEDIA METADATA
+        NewMediaResponseData newCreatedMedia = requestSenderService.createNewMediaMetadata(
+                new NewMediaMetadata(mediaName, siteName, mediaLength, 0, bucketName, mediaDetails.getFileName())
+        );
+
+        return newCreatedMedia;
     }
 
 }
