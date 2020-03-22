@@ -43,7 +43,7 @@ public class MediaManagerService {
         String bucketName = requestSenderService.createNewBucketForMedia(mediaName.toLowerCase().replaceAll("\\s+","-"));
         requestSenderService.sendMediaToUploadOnS3(media, bucketName, mediaDetails.getFileName());
 
-        if(media.delete()){
+        if(!media.delete()){
             System.out.println("File was not deleted!");
         }
 

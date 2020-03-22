@@ -15,9 +15,12 @@ import si.fri.DTO.requests.AWSNewBucket;
 import si.fri.DTO.requests.NewMediaResponseData;
 import si.fri.DTO.requests.core.AWSRequestResponse;
 import si.fri.DTO.requests.core.NewMediaResponse;
+import si.fri.mag.AWSRemoteServiceConfig;
+import si.fri.mag.MediaMetadataRemoteServiceConfig;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
 import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.ProcessingException;
 import javax.ws.rs.WebApplicationException;
@@ -34,6 +37,12 @@ import java.io.InputStream;
 @RequestScoped
 public class RequestSenderService {
 
+    @Inject
+    private AWSRemoteServiceConfig awsRemoteServiceConfig;
+
+    @Inject
+    private MediaMetadataRemoteServiceConfig mediaMetadataRemoteServiceConfig;
+
     private Client httpClient;
 
     @PostConstruct
@@ -43,7 +52,7 @@ public class RequestSenderService {
 
     public boolean sendMediaToUploadOnS3(File newMedia, String bucketName, String mediaStorageName) {
         MultiPart multiPart = null;
-        String serverURL = "http://localhost:8002/v1/awsStorage/media" + "/" + bucketName + "/" + mediaStorageName; // TODO
+        String serverURL = awsRemoteServiceConfig.getAwsStorageUrl() + awsRemoteServiceConfig.getUploadMediaUri() + bucketName + "/" + mediaStorageName;
         System.out.println(serverURL);
         try {
             Client client = ClientBuilder.newBuilder().register(MultiPartFeature.class).build();
@@ -78,10 +87,9 @@ public class RequestSenderService {
     }
 
     public String createNewBucketForMedia(String bucketName){
-        System.out.println("CreatingBucket url: " + "http://localhost:8002/v1/awsStorage/bucket/" + bucketName);  //TODO
         try{
             Response response = httpClient
-                    .target("http://localhost:8002/v1/awsStorage/bucket/" + bucketName)
+                    .target(awsRemoteServiceConfig.getAwsStorageUrl() + awsRemoteServiceConfig.getCreateBucketUri() + bucketName)
                     .request(MediaType.APPLICATION_JSON_TYPE)
                     .post(Entity.entity("", MediaType.APPLICATION_JSON_TYPE));
 
@@ -98,12 +106,27 @@ public class RequestSenderService {
         }
     }
 
-    public NewMediaResponseData createNewMediaMetadata(NewMediaMetadata newMediaMetadata){
+    public InputStream getMedia(String bucketName, String mediaName){
+        try {
+            CloseableHttpClient client = HttpClientBuilder.create().build();
+            HttpGet request = new HttpGet(awsRemoteServiceConfig.getAwsStorageUrl() + awsRemoteServiceConfig.getGetMediaUri() + bucketName + "/" + mediaName);
+            HttpResponse response = client.execute(request);
+            HttpEntity entity = response.getEntity();
+            if (response.getStatusLine().getStatusCode() == 200) {
+                return entity.getContent();
+            } else {
+                return null;
+            }
+        } catch (UnsupportedOperationException | IOException e) {
+            e.printStackTrace();
+            throw new InternalServerErrorException(e.getMessage());
+        }
+    }
 
-        System.out.println("Media metadata " + "http://localhost:8001/v1/media/metadata/new");  //TODO
+    public NewMediaResponseData createNewMediaMetadata(NewMediaMetadata newMediaMetadata){
         try{
             Response response = httpClient
-                    .target("http://localhost:8001/v1/media/metadata/new")
+                    .target(mediaMetadataRemoteServiceConfig.getMediaMetadataUrl() + mediaMetadataRemoteServiceConfig.getNewMediaMetadataUri())
                     .request(MediaType.APPLICATION_JSON_TYPE)
                     .post(Entity.entity(newMediaMetadata, MediaType.APPLICATION_JSON_TYPE));
 
@@ -115,23 +138,6 @@ public class RequestSenderService {
                 throw new InternalServerErrorException("error when creating aws bucket: STATUS: " + response.getStatus());
             }
         }catch (WebApplicationException | ProcessingException e) {
-            throw new InternalServerErrorException(e.getMessage());
-        }
-    }
-
-    public InputStream getMedia(String bucketName, String mediaName){
-        try {
-            CloseableHttpClient client = HttpClientBuilder.create().build();
-            HttpGet request = new HttpGet("http://localhost:8002/v1/awsStorage/media/" + bucketName + "/"+mediaName); // TODO CHANGE
-            HttpResponse response = client.execute(request);
-            HttpEntity entity = response.getEntity();
-            if (response.getStatusLine().getStatusCode() == 200) {
-                return entity.getContent();
-            } else {
-                return null;
-            }
-        } catch (UnsupportedOperationException | IOException e) {
-            e.printStackTrace();
             throw new InternalServerErrorException(e.getMessage());
         }
     }

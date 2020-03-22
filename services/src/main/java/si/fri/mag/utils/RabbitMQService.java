@@ -4,25 +4,31 @@ import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.MessageProperties;
+import si.fri.mag.RabbitMQConfig;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
 import javax.ws.rs.InternalServerErrorException;
 import java.io.IOException;
 import java.util.concurrent.TimeoutException;
 
 @RequestScoped
 public class RabbitMQService {
-    private static final String TASK_QUEUE_NAME = "MEDIA_CHUNKS_QUEUE";
+    private static String TASK_QUEUE_NAME = "";
 
-    ConnectionFactory factory;
+    @Inject
+    private RabbitMQConfig rabbitMQConfig;
+
+    private ConnectionFactory factory;
 
     @PostConstruct
     private void init(){
+        TASK_QUEUE_NAME = rabbitMQConfig.getTaksQueueName();
         factory = new ConnectionFactory();
-        factory.setHost("172.18.29.145");  // TODO CHANGE
-        factory.setUsername("uros");
-        factory.setPassword("uros123");
+        factory.setHost(rabbitMQConfig.getHost());
+        factory.setUsername(rabbitMQConfig.getUsername());
+        factory.setPassword(rabbitMQConfig.getPassword());
     }
 
     public void sendMessage(String message) {

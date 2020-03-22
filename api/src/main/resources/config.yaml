@@ -1,5 +1,5 @@
 kumuluzee:
-  name: mag2020-media-metadata
+  name: mag2020-media-manager
   env:
     name: dev
   version: 1.0.0
@@ -12,3 +12,21 @@ kumuluzee:
     max-retry-delay-ms: 900000
     etcd:
       hosts: http://localhost:2379
+
+appproperties:
+  rabbitmq:
+    task-queue-name: MEDIA_CHUNKS_QUEUE
+    host: localhost
+    username: uros
+    password: uros123
+  services:
+    awsstorage:
+      url: http://localhost:8002/
+      endpoints:
+        uploadmedia: v1/awsStorage/media/
+        createbucket: v1/awsStorage/bucket/
+        getmedia: v1/awsStorage/media/
+    mediametadata:
+      url: http://localhost:8001/
+      endpoints:
+        newmediametadata: v1/media/metadata/new/
