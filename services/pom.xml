@@ -28,6 +28,14 @@
             <artifactId>isoparser</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.rabbitmq</groupId>
+            <artifactId>amqp-client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+        </dependency>
+        <dependency>
             <groupId>si.fri.mag</groupId>
             <artifactId>lib</artifactId>
             <version>1.0.0-SNAPSHOT</version>

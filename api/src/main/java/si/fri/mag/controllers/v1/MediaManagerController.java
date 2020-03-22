@@ -5,6 +5,7 @@ import org.glassfish.jersey.media.multipart.FormDataParam;
 import si.fri.DTO.requests.NewMediaResponseData;
 import si.fri.mag.MediaManagerService;
 import si.fri.mag.controllers.MainController;
+import si.fri.mag.utils.RequestSenderService;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -22,6 +23,9 @@ public class MediaManagerController extends MainController {
 
     @Inject
     private MediaManagerService mediaManagerService;
+
+    @Inject
+    private RequestSenderService requestSenderService;
 
     @POST
     @Path("upload")
@@ -45,9 +49,14 @@ public class MediaManagerController extends MainController {
     }
 
     @GET
-    @Path("{mediaId}")
-    public Response getWholeMedia(@PathParam("mediaId") String mediaId) {
-        return this.responseOk("", "ok");
+    @Path("{bucketName}/{mediaName}")
+    public Response getWholeMedia(@PathParam("bucketName") String bucketName, @PathParam("mediaName") String mediaName) {
+
+        InputStream mediaObject = requestSenderService.getMedia(bucketName, mediaName);
+
+        Response.ResponseBuilder response = Response.ok(mediaObject);
+        response.header("Content-Disposition", "attachment; filename="+mediaName);
+        return response.build();
     }
 
 }

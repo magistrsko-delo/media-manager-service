@@ -1,6 +1,11 @@
 package si.fri.mag.utils;
 
 import com.google.gson.Gson;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.glassfish.jersey.media.multipart.Boundary;
 import org.glassfish.jersey.media.multipart.MultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
@@ -24,6 +29,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
 @RequestScoped
 public class RequestSenderService {
@@ -113,5 +119,20 @@ public class RequestSenderService {
         }
     }
 
-
+    public InputStream getMedia(String bucketName, String mediaName){
+        try {
+            CloseableHttpClient client = HttpClientBuilder.create().build();
+            HttpGet request = new HttpGet("http://localhost:8002/v1/awsStorage/media/" + bucketName + "/"+mediaName); // TODO CHANGE
+            HttpResponse response = client.execute(request);
+            HttpEntity entity = response.getEntity();
+            if (response.getStatusLine().getStatusCode() == 200) {
+                return entity.getContent();
+            } else {
+                return null;
+            }
+        } catch (UnsupportedOperationException | IOException e) {
+            e.printStackTrace();
+            throw new InternalServerErrorException(e.getMessage());
+        }
+    }
 }

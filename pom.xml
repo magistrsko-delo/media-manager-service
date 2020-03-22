@@ -26,6 +26,8 @@
         <kumuluzee-config.version>1.2.1</kumuluzee-config.version>
         <commons-io-version>2.6</commons-io-version>
         <org.mp4parser-version>1.9.41</org.mp4parser-version>
+        <amqp-client-version>5.8.0</amqp-client-version>
+        <apache-http-clinet-version>4.5.2</apache-http-clinet-version>
     </properties>
 
     <dependencyManagement>
@@ -67,6 +69,16 @@
                 <artifactId>isoparser</artifactId>
                 <version>${org.mp4parser-version}</version>
             </dependency>
+            <dependency>
+                <groupId>com.rabbitmq</groupId>
+                <artifactId>amqp-client</artifactId>
+                <version>${amqp-client-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpclient</artifactId>
+                <version>${apache-http-clinet-version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -87,6 +99,7 @@
             <groupId>com.kumuluz.ee</groupId>
             <artifactId>kumuluzee-jax-rs-jersey</artifactId>
         </dependency>
+
     </dependencies>
 
     <repositories>
