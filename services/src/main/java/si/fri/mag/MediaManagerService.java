@@ -1,7 +1,9 @@
 package si.fri.mag;
 
 import com.google.gson.Gson;
+import grpc.AwsstorageService;
 import grpc.client.AwsStorageServiceClientGrpc;
+import io.grpc.stub.StreamObserver;
 import org.apache.commons.io.FileUtils;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.mp4parser.IsoFile;
@@ -10,14 +12,14 @@ import si.fri.DTO.requests.NewMediaResponseData;
 import si.fri.mag.utils.RabbitMQService;
 import si.fri.mag.utils.RequestSenderService;
 
-import javax.enterprise.context.RequestScoped;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.ws.rs.InternalServerErrorException;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
-@RequestScoped
+@ApplicationScoped
 public class MediaManagerService {
 
     @Inject
@@ -28,14 +30,15 @@ public class MediaManagerService {
 
     @Inject
     private AwsStorageServiceClientGrpc awsStorageServiceClientGrpc;
+    private NewMediaResponseData newCreatedMedia;
 
     public NewMediaResponseData uploadAndCreateMedia(InputStream uploadedInputStream, FormDataContentDisposition mediaDetails,
                                         String siteName, String mediaName)  {
 
         Integer mediaLength = 0;
-        File media = new File(mediaDetails.getFileName());
+        File  mediaFile = new File(mediaDetails.getFileName());
         try {
-            FileUtils.copyInputStreamToFile(uploadedInputStream, media);
+            FileUtils.copyInputStreamToFile(uploadedInputStream, mediaFile);
             IsoFile isoFile = new IsoFile(mediaDetails.getFileName());
             double lengthInSeconds = (int)((double) isoFile.getMovieBox().getMovieHeaderBox().getDuration() / isoFile.getMovieBox().getMovieHeaderBox().getTimescale());
             mediaLength = new Double(lengthInSeconds).intValue();
@@ -44,24 +47,41 @@ public class MediaManagerService {
         }
 
         String bucketName = awsStorageServiceClientGrpc.createAwsBucket(mediaName.toLowerCase().replaceAll("\\s+","-"));
-        requestSenderService.sendMediaToUploadOnS3(media, bucketName, mediaDetails.getFileName());
 
-        boolean isMediaDeleted = media.delete();
-        if(!isMediaDeleted){
-            System.out.println("File was not deleted!");
-        }
+        awsStorageServiceClientGrpc.uploadFileToAWS(mediaFile, bucketName, mediaDetails.getFileName());
 
+        System.out.println("METADATA");
         // CREATE NEW MEDIA METADATA
-        NewMediaResponseData newCreatedMedia = requestSenderService.createNewMediaMetadata(
+        newCreatedMedia = requestSenderService.createNewMediaMetadata(
                 new NewMediaMetadata(mediaName, siteName, mediaLength, 0, bucketName, mediaDetails.getFileName())
         );
 
-
-        // TODO UNCOMMENT WHEN DONE
-        // Gson gson = new Gson();
-        // rabbitMQService.sendMessage(gson.toJson(newCreatedMedia));
-
         return newCreatedMedia;
+    }
+
+    public StreamObserver<AwsstorageService.UploadResponse> uploadStreamGrpcObserver() {
+        return new StreamObserver<AwsstorageService.UploadResponse>() {
+
+            @Override
+            public void onNext(AwsstorageService.UploadResponse value) {
+                System.out.println("SENDING TO WORKER");
+                Gson gson = new Gson();
+                rabbitMQService.sendMessage(gson.toJson(newCreatedMedia));
+            }
+
+            @Override
+            public void onError(Throwable t) {
+                System.out.println("Client response onError: ");
+                t.printStackTrace();
+            }
+
+            @Override
+            public void onCompleted() {
+                System.out.println("Client response onCompleted");
+                final File file = new File(newCreatedMedia.getAwsStorageNameWholeMedia());
+                file.delete();
+            }
+        };
     }
 
 }

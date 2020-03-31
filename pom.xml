@@ -13,7 +13,6 @@
         <module>lib</module>
         <module>services</module>
         <module>config</module>
-        <module>grpc</module>
     </modules>
 
     <properties>

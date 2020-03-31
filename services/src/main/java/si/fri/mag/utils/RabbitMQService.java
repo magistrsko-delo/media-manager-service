@@ -7,13 +7,13 @@ import com.rabbitmq.client.MessageProperties;
 import si.fri.mag.RabbitMQConfig;
 
 import javax.annotation.PostConstruct;
-import javax.enterprise.context.RequestScoped;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.ws.rs.InternalServerErrorException;
 import java.io.IOException;
 import java.util.concurrent.TimeoutException;
 
-@RequestScoped
+@ApplicationScoped
 public class RabbitMQService {
     private static String TASK_QUEUE_NAME = "";
 
