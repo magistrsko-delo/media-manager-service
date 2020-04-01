@@ -48,7 +48,7 @@ public class MediaMetadataServiceClientGrpc {
                 .build();
 
         try {
-            MediametadataService.CreateNewMediaMetadataResponse rs = mediaMetadataBlockingStub.newMediaMetadata(request);
+            MediametadataService.MediaMetadataResponse rs = mediaMetadataBlockingStub.newMediaMetadata(request);
             NewMediaResponseData newMediaResponseData = new NewMediaResponseData();
             newMediaResponseData.setMediaId(rs.getMediaId());
             newMediaResponseData.setName(rs.getName());
@@ -65,16 +65,5 @@ public class MediaMetadataServiceClientGrpc {
         } catch (Exception e) {
             throw new InternalServerErrorException("new media metadata: " + e.getMessage());
         }
-
     }
-
-    /*private List<String> extractKeywords(MediametadataService.CreateNewMediaMetadataResponse rs) {
-        List<String> keywords = new ArrayList<String>();
-        for (int i = 0; i < rs.getKeywordsCount(); i++) {
-            keywords.add(rs.getK)
-        }
-
-        return null;
-    }*/
-
 }
