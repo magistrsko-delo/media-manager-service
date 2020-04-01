@@ -29,6 +29,8 @@
         <org.mp4parser-version>1.9.41</org.mp4parser-version>
         <amqp-client-version>5.8.0</amqp-client-version>
         <apache-http-clinet-version>4.5.2</apache-http-clinet-version>
+
+        <kumuluzee.grpc.version>1.1.0</kumuluzee.grpc.version>
     </properties>
 
     <dependencyManagement>
@@ -99,6 +101,11 @@
         <dependency>
             <groupId>com.kumuluz.ee</groupId>
             <artifactId>kumuluzee-jax-rs-jersey</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.kumuluz.ee.grpc</groupId>
+            <artifactId>kumuluzee-grpc</artifactId>
+            <version>${kumuluzee.grpc.version}</version>
         </dependency>
 
     </dependencies>
