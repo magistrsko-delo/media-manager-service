@@ -7,7 +7,7 @@ import java.util.List;
 public class NewMediaResponseData extends MediaMetadataAbstract {
     private Integer mediaId;
     private String thumbnail;
-    private String projectId;
+    private Integer projectId;
     private List<String> keywords;
     private String createdAt;
     private String updatedAt;
@@ -20,7 +20,7 @@ public class NewMediaResponseData extends MediaMetadataAbstract {
         return thumbnail;
     }
 
-    public String getProjectId() {
+    public Integer getProjectId() {
         return projectId;
     }
 
@@ -52,7 +52,7 @@ public class NewMediaResponseData extends MediaMetadataAbstract {
         this.updatedAt = updatedAt;
     }
 
-    public void setProjectId(String projectId) {
+    public void setProjectId(Integer projectId) {
         this.projectId = projectId;
     }
 

@@ -3,6 +3,7 @@ package si.fri.mag;
 import com.google.gson.Gson;
 import grpc.AwsstorageService;
 import grpc.client.AwsStorageServiceClientGrpc;
+import grpc.client.MediaMetadataServiceClientGrpc;
 import io.grpc.stub.StreamObserver;
 import org.apache.commons.io.FileUtils;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
@@ -30,6 +31,11 @@ public class MediaManagerService {
 
     @Inject
     private AwsStorageServiceClientGrpc awsStorageServiceClientGrpc;
+
+
+    @Inject
+    private MediaMetadataServiceClientGrpc mediaMetadataServiceClientGrpc;
+
     private NewMediaResponseData newCreatedMedia;
 
     public NewMediaResponseData uploadAndCreateMedia(InputStream uploadedInputStream, FormDataContentDisposition mediaDetails,
@@ -52,7 +58,7 @@ public class MediaManagerService {
 
         System.out.println("METADATA");
         // CREATE NEW MEDIA METADATA
-        newCreatedMedia = requestSenderService.createNewMediaMetadata(
+        newCreatedMedia = mediaMetadataServiceClientGrpc.createNewMediaMetadata(
                 new NewMediaMetadata(mediaName, siteName, mediaLength, 0, bucketName, mediaDetails.getFileName())
         );
 

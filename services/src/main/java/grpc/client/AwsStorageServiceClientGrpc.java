@@ -49,7 +49,6 @@ public class AwsStorageServiceClientGrpc {
     }
 
     public void uploadFileToAWS(File newMedia, String bucketName, String mediaName) {
-        System.out.println("tid: " +  Thread.currentThread().getId() + ", Will try to upload media");
 
         MediaManagerService mediaManagerService = CDI.current().select(MediaManagerService.class).get();
 

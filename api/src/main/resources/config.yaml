@@ -17,6 +17,9 @@ kumuluzee:
       - name: awsStorageClient
         port: 9001
         address: localhost
+      - name: mediaMetadataClient
+        port: 9002
+        address: localhost
 
 appproperties:
   rabbitmq:
