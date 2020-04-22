@@ -9,6 +9,7 @@ import si.fri.mag.utils.RequestSenderService;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.inject.Qualifier;
 import javax.validation.constraints.NotEmpty;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -50,12 +51,19 @@ public class MediaManagerController extends MainController {
 
     @GET
     @Path("{bucketName}/{mediaName}")
-    public Response getWholeMedia(@PathParam("bucketName") String bucketName, @PathParam("mediaName") String mediaName) {
+    public Response getWholeMedia(@PathParam("bucketName") String bucketName, @PathParam("mediaName") String mediaName,
+                                  @QueryParam("isImage") boolean isImage) {
 
         InputStream mediaObject = requestSenderService.getMedia(bucketName, mediaName);
-
         Response.ResponseBuilder response = Response.ok(mediaObject);
-        response.header("Content-Disposition", "attachment; filename="+mediaName);
+
+        if (isImage) {
+            response.type("image/jpg");
+            response.header("Content-Disposition", "filename="+mediaName);
+        } else {
+            response.header("Content-Disposition", "attachment; filename="+mediaName);
+        }
+
         return response.build();
     }
 
