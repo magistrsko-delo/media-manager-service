@@ -34,6 +34,20 @@ public class MediaMetadataServiceClientGrpc {
         }
     }
 
+    public boolean checkIfMediaExist(Integer mediaId) {
+        MediametadataService.GetMediaMetadataRequest request = MediametadataService.GetMediaMetadataRequest
+                .newBuilder()
+                .setMediaId(mediaId)
+                .build();
+
+        try {
+            MediametadataService.MediaMetadataResponse rsp = mediaMetadataBlockingStub.getMediaMetadata(request);
+            return rsp.getMediaId() == mediaId;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
     public NewMediaResponseData createNewMediaMetadata(NewMediaMetadata newMediaMetadata) {
         MediametadataService.CreateNewMediaMetadataRequest request = MediametadataService.CreateNewMediaMetadataRequest
                 .newBuilder()

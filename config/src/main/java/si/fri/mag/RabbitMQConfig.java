@@ -8,8 +8,11 @@ import javax.enterprise.context.ApplicationScoped;
 @ApplicationScoped
 @ConfigBundle("appproperties")
 public class RabbitMQConfig {
-    @ConfigValue(value = "rabbitmq.task-queue-name", watch = false)
-    private String taksQueueName;
+    @ConfigValue(value = "rabbitmq.chunks-queue-name", watch = false)
+    private String chunksQueueName;
+
+    @ConfigValue(value = "rabbitmq.image-queue-name", watch = false)
+    private String imageQueueName;
 
     @ConfigValue(value = "rabbitmq.host", watch = true)
     private String host;
@@ -28,8 +31,12 @@ public class RabbitMQConfig {
         return password;
     }
 
-    public String getTaksQueueName() {
-        return taksQueueName;
+    public String getChunksQueueName() {
+        return chunksQueueName;
+    }
+
+    public String getImageQueueName() {
+        return imageQueueName;
     }
 
     public String getUsername() {
@@ -44,8 +51,12 @@ public class RabbitMQConfig {
         this.password = password;
     }
 
-    public void setTaksQueueName(String taksQueueName) {
-        this.taksQueueName = taksQueueName;
+    public void setChunksQueueName(String chunksQueueName) {
+        this.chunksQueueName = chunksQueueName;
+    }
+
+    public void setImageQueueName(String imageQueueName) {
+        this.imageQueueName = imageQueueName;
     }
 
     public void setUsername(String username) {

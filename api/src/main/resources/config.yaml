@@ -23,7 +23,8 @@ kumuluzee:
 
 appproperties:
   rabbitmq:
-    task-queue-name: MEDIA_CHUNKS_QUEUE
+    chunks-queue-name: MEDIA_CHUNKS_QUEUE
+    image-queue-name: IMAGE_QUEUE
     host: localhost
     username: uros
     password: uros123

@@ -9,6 +9,7 @@ import org.apache.commons.io.FileUtils;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.mp4parser.IsoFile;
 import si.fri.DTO.NewMediaMetadata;
+import si.fri.DTO.requests.MediaImageRequest;
 import si.fri.DTO.requests.NewMediaResponseData;
 import si.fri.mag.utils.RabbitMQService;
 import si.fri.mag.utils.RequestSenderService;
@@ -72,7 +73,7 @@ public class MediaManagerService {
             public void onNext(AwsstorageService.UploadResponse value) {
                 System.out.println("SENDING TO WORKER");
                 Gson gson = new Gson();
-                rabbitMQService.sendMessage(gson.toJson(newCreatedMedia));
+                rabbitMQService.sendChunksQueueMessage(gson.toJson(newCreatedMedia));
             }
 
             @Override
@@ -88,6 +89,19 @@ public class MediaManagerService {
                 file.delete();
             }
         };
+    }
+
+    public boolean sendMediaImageToWorkQueue(MediaImageRequest mediaImageRequest) {
+
+        boolean isMedia = mediaMetadataServiceClientGrpc.checkIfMediaExist(mediaImageRequest.getMediaId());
+
+        if (!isMedia) {
+            return false;
+        }
+
+        Gson gson = new Gson();
+        rabbitMQService.sendImageQueueMessage(gson.toJson(mediaImageRequest));
+        return true;
     }
 
 }

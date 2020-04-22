@@ -15,7 +15,8 @@ import java.util.concurrent.TimeoutException;
 
 @ApplicationScoped
 public class RabbitMQService {
-    private static String TASK_QUEUE_NAME = "";
+    private static String CHUNKS_QUEUE_NAME = "";
+    private static String IMAGE_QUEUE_NAME = "";
 
     @Inject
     private RabbitMQConfig rabbitMQConfig;
@@ -24,21 +25,37 @@ public class RabbitMQService {
 
     @PostConstruct
     private void init(){
-        TASK_QUEUE_NAME = rabbitMQConfig.getTaksQueueName();
+        CHUNKS_QUEUE_NAME = rabbitMQConfig.getChunksQueueName();
+        IMAGE_QUEUE_NAME = rabbitMQConfig.getImageQueueName();
         factory = new ConnectionFactory();
         factory.setHost(rabbitMQConfig.getHost());
         factory.setUsername(rabbitMQConfig.getUsername());
         factory.setPassword(rabbitMQConfig.getPassword());
     }
 
-    public void sendMessage(String message) {
+    public void sendChunksQueueMessage(String message) {
         try (Connection connection = factory.newConnection();
              Channel channel = connection.createChannel()
         )
         {
-            channel.queueDeclare(TASK_QUEUE_NAME, true, false, false, null);
+            channel.queueDeclare(CHUNKS_QUEUE_NAME, true, false, false, null);
 
-            channel.basicPublish("", TASK_QUEUE_NAME,
+            channel.basicPublish("", CHUNKS_QUEUE_NAME,
+                    MessageProperties.PERSISTENT_TEXT_PLAIN,
+                    message.getBytes("UTF-8"));
+        } catch (TimeoutException | IOException e) {
+            throw new InternalServerErrorException(e.getMessage());
+        }
+    }
+
+    public void sendImageQueueMessage(String message) {
+        try (Connection connection = factory.newConnection();
+             Channel channel = connection.createChannel()
+        )
+        {
+            channel.queueDeclare(IMAGE_QUEUE_NAME, true, false, false, null);
+
+            channel.basicPublish("", IMAGE_QUEUE_NAME,
                     MessageProperties.PERSISTENT_TEXT_PLAIN,
                     message.getBytes("UTF-8"));
         } catch (TimeoutException | IOException e) {

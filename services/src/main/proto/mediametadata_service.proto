@@ -1,9 +1,14 @@
 syntax = "proto3";
 option java_package = "grpc";
+import "google/protobuf/empty.proto";
 
 service MediaMetadata {
   rpc newMediaMetadata(CreateNewMediaMetadataRequest) returns (MediaMetadataResponse) {};
   rpc updateMediaMetadata(UpdateMediaRequest) returns(MediaMetadataResponse) {};
+  rpc getMediaMetadata(GetMediaMetadataRequest) returns(MediaMetadataResponse) {};
+  rpc getAllMediaMetadata(google.protobuf.Empty) returns(MediaMetadataResponseRepeated) {};
+  rpc getProjectMediasMetadata(GetProjectMediasRequest) returns(MediaMetadataResponseRepeated) {};
+  rpc getOneProjectMediasMetadata(GetOneProjectMedia) returns(MediaMetadataResponse) {};
 }
 
 message CreateNewMediaMetadataRequest {
@@ -15,6 +20,10 @@ message CreateNewMediaMetadataRequest {
   int32 projectId = 6;
   string awsBucketWholeMedia = 7;
   string awsStorageNameWholeMedia = 8;
+}
+
+message MediaMetadataResponseRepeated {
+  repeated MediaMetadataResponse data = 1;
 }
 
 message MediaMetadataResponse {
@@ -44,4 +53,17 @@ message UpdateMediaRequest {
   string awsBucketWholeMedia = 8;
   string awsStorageNameWholeMedia = 9;
   int64 createdAt = 11;
+}
+
+message GetMediaMetadataRequest {
+  int32 mediaId = 1;
+}
+
+message GetProjectMediasRequest {
+  int32 projectId = 1;
+}
+
+message GetOneProjectMedia {
+  int32 mediaId = 1;
+  int32 projectId = 2;
 }

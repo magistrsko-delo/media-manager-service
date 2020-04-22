@@ -1,7 +1,9 @@
 package si.fri.mag.controllers.v1;
 
+import com.google.gson.Gson;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
+import si.fri.DTO.requests.MediaImageRequest;
 import si.fri.DTO.requests.NewMediaResponseData;
 import si.fri.mag.MediaManagerService;
 import si.fri.mag.controllers.MainController;
@@ -41,6 +43,32 @@ public class MediaManagerController extends MainController {
 
         NewMediaResponseData newMedia = mediaManagerService.uploadAndCreateMedia(mediaStream, mediaDetails, siteName, mediaName);
         return this.responseOk("", newMedia);
+    }
+
+    @POST
+    @Path("{mediaId}/image")
+    public Response mediaImage(@PathParam("mediaId") Integer mediaId, String body) {
+
+        Gson gson = new Gson();
+        MediaImageRequest mediaImageRequest;
+
+        try {
+            mediaImageRequest = gson.fromJson(body, MediaImageRequest.class);
+        } catch (Exception e) {
+            return this.responseError(500, e.getMessage());
+        }
+
+        if (!mediaImageRequest.getMediaId().equals(mediaId)) {
+            return this.responseError(400, "mediaIds doues not match");
+        }
+
+        boolean isImageSendToWorkQueue = mediaManagerService.sendMediaImageToWorkQueue(mediaImageRequest);
+
+        if (!isImageSendToWorkQueue) {
+            return this.responseError(404, "Media with id: " + mediaId + " does not exist");
+        }
+
+        return this.responseOk("Media image send to work queue", isImageSendToWorkQueue);
     }
 
     @DELETE
