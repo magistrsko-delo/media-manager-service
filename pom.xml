@@ -31,6 +31,7 @@
         <apache-http-clinet-version>4.5.2</apache-http-clinet-version>
 
         <kumuluzee.grpc.version>1.1.0</kumuluzee.grpc.version>
+        <kumuluzee-cors.version>1.0.5</kumuluzee-cors.version>
     </properties>
 
     <dependencyManagement>
@@ -86,6 +87,11 @@
     </dependencyManagement>
 
     <dependencies>
+        <dependency>
+            <groupId>com.kumuluz.ee.cors</groupId>
+            <artifactId>kumuluzee-cors</artifactId>
+            <version>${kumuluzee-cors.version}</version>
+        </dependency>
         <dependency>
             <groupId>com.kumuluz.ee</groupId>
             <artifactId>kumuluzee-core</artifactId>

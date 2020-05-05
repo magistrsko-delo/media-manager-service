@@ -12,6 +12,10 @@ kumuluzee:
     max-retry-delay-ms: 900000
     etcd:
       hosts: http://localhost:2379
+  cors-filter:
+    servlet:
+      allow-generic-http-requests: false
+      allow-origin: "*"
   grpc:
     clients:
       - name: awsStorageClient
