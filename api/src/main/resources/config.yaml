@@ -14,7 +14,7 @@ kumuluzee:
       hosts: http://localhost:2379
   cors-filter:
     servlet:
-      allow-generic-http-requests: false
+      allow-generic-http-requests: true
       allow-origin: "*"
   grpc:
     clients:
