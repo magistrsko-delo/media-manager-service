@@ -15,6 +15,7 @@ kumuluzee:
   cors-filter:
     servlet:
       allow-generic-http-requests: true
+      supported-methods: "GET, POST, HEAD, OPTIONS, DELETE"
       allow-origin: "*"
   grpc:
     clients:
