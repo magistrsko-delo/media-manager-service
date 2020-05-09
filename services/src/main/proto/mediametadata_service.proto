@@ -9,6 +9,11 @@ service MediaMetadata {
   rpc getAllMediaMetadata(google.protobuf.Empty) returns(MediaMetadataResponseRepeated) {};
   rpc getProjectMediasMetadata(GetProjectMediasRequest) returns(MediaMetadataResponseRepeated) {};
   rpc getOneProjectMediasMetadata(GetOneProjectMedia) returns(MediaMetadataResponse) {};
+
+  rpc getLiveMedias(google.protobuf.Empty) returns(MediaMetadataResponseRepeated){}
+  rpc getMediasInProgress(google.protobuf.Empty) returns(MediaMetadataResponseRepeated){}
+
+  rpc deleteMedia(GetMediaMetadataRequest) returns(StatusResponse1);
 }
 
 message CreateNewMediaMetadataRequest {
@@ -66,4 +71,10 @@ message GetProjectMediasRequest {
 message GetOneProjectMedia {
   int32 mediaId = 1;
   int32 projectId = 2;
+}
+
+message StatusResponse1 {
+  string message = 1;
+  int32 status = 2;
+  bool data = 3;
 }

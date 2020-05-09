@@ -16,6 +16,7 @@ import javax.ws.rs.InternalServerErrorException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 @ApplicationScoped
 public class MediaMetadataServiceClientGrpc {
@@ -78,6 +79,19 @@ public class MediaMetadataServiceClientGrpc {
             return newMediaResponseData;
         } catch (Exception e) {
             throw new InternalServerErrorException("new media metadata: " + e.getMessage());
+        }
+    }
+
+    public boolean deleteMediaMetadata(Integer mediaId) {
+        MediametadataService.GetMediaMetadataRequest request = MediametadataService.GetMediaMetadataRequest.newBuilder()
+                .setMediaId(mediaId)
+                .build();
+
+        try {
+            MediametadataService.StatusResponse1 rsp = mediaMetadataBlockingStub.deleteMedia(request);
+            return rsp.getData();
+        } catch (Exception e) {
+            throw new InternalServerErrorException("delete media metadata " + e.getMessage());
         }
     }
 }

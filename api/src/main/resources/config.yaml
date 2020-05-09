@@ -43,3 +43,5 @@ appproperties:
       url: http://localhost:8001/
       endpoints:
         newmediametadata: v1/media/metadata/new/
+    mediachunks:
+      url: http://localhost:8004/

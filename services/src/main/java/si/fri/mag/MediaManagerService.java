@@ -104,4 +104,20 @@ public class MediaManagerService {
         return true;
     }
 
+    public boolean deleteMedia(Integer mediaId) {
+        boolean isMediaDeleted = mediaMetadataServiceClientGrpc.deleteMediaMetadata(mediaId);
+        if (!isMediaDeleted) {
+            System.out.println("problem with media deletion");
+            return false;
+        }
+
+        boolean isLinkMediaChunkDeleted = requestSenderService.deleteLinkedMediaChunks(mediaId);
+        if (!isLinkMediaChunkDeleted) {
+            System.out.println("link media chunk deletion problem");
+            return false;
+        }
+
+        return true;
+    }
+
 }

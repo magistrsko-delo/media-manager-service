@@ -6,6 +6,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import si.fri.mag.AWSRemoteServiceConfig;
+import si.fri.mag.MediaChunksRemoteServiceConfig;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.RequestScoped;
@@ -13,6 +14,8 @@ import javax.inject.Inject;
 import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -21,6 +24,9 @@ public class RequestSenderService {
 
     @Inject
     private AWSRemoteServiceConfig awsRemoteServiceConfig;
+
+    @Inject
+    private MediaChunksRemoteServiceConfig mediaChunksRemoteServiceConfig;
 
     private Client httpClient;
 
@@ -42,6 +48,19 @@ public class RequestSenderService {
             }
         } catch (UnsupportedOperationException | IOException e) {
             e.printStackTrace();
+            throw new InternalServerErrorException(e.getMessage());
+        }
+    }
+
+    public boolean deleteLinkedMediaChunks(Integer mediaId) {
+        // System.out.println(this.mediaChunksRemoteServiceConfig.getMediaChunksUrl() + "v1/media/" + mediaId);
+        try {
+            Response response = httpClient
+                    .target(this.mediaChunksRemoteServiceConfig.getMediaChunksUrl() + "v1/media/" + mediaId)
+                    .request(MediaType.APPLICATION_JSON_TYPE)
+                    .delete();
+            return response.getStatus() == 200;
+        } catch (Exception e) {
             throw new InternalServerErrorException(e.getMessage());
         }
     }

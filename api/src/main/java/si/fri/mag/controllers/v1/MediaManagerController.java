@@ -73,8 +73,13 @@ public class MediaManagerController extends MainController {
 
     @DELETE
     @Path("{mediaId}")
-    public Response deleteMedia(@PathParam("mediaId") String mediaId) {
-        return this.responseOk("TODO", "ok");
+    public Response deleteMedia(@PathParam("mediaId") Integer mediaId) {
+        boolean isMediaDeleted = mediaManagerService.deleteMedia(mediaId);
+
+        if (!isMediaDeleted) {
+            this.responseError(500, "media not deleted");
+        }
+        return this.responseOk("media deleted", "ok");
     }
 
     @GET
