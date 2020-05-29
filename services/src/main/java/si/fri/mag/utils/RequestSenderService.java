@@ -5,6 +5,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.eclipse.microprofile.opentracing.ClientTracingRegistrar;
 import si.fri.mag.AWSRemoteServiceConfig;
 import si.fri.mag.MediaChunksRemoteServiceConfig;
 
@@ -32,7 +33,7 @@ public class RequestSenderService {
 
     @PostConstruct
     private void init(){
-        this.httpClient = ClientBuilder.newClient();
+        this.httpClient = ClientTracingRegistrar.configure(ClientBuilder.newBuilder()).build();
     }
 
     public InputStream getMedia(String bucketName, String mediaName){

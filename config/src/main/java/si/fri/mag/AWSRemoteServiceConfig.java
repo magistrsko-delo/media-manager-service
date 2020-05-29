@@ -9,7 +9,7 @@ import javax.enterprise.context.ApplicationScoped;
 @ConfigBundle("appproperties")
 public class AWSRemoteServiceConfig {
 
-    @ConfigValue(value = "services.awsstorage.url", watch = true)
+    @ConfigValue(value = "services.awsstorage.url", watch = false)
     private String awsStorageUrl;
 
     @ConfigValue(value = "services.awsstorage.endpoints.uploadmedia", watch = false)

@@ -21,6 +21,8 @@ kumuluzee:
     checks:
       etcd-health-check:
         connection-url: http://localhost:2379/health
+      rabbit-health-check:
+        connection-url: amqp://uros:uros123@localhost:5672/virtualHost?connection_timeout=2000
   opentracing:
     jaeger:
       service-name: mag2020-media-manager

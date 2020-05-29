@@ -14,7 +14,7 @@ public class RabbitMQConfig {
     @ConfigValue(value = "rabbitmq.image-queue-name", watch = false)
     private String imageQueueName;
 
-    @ConfigValue(value = "rabbitmq.host", watch = true)
+    @ConfigValue(value = "rabbitmq.host", watch = false)
     private String host;
 
     @ConfigValue(value = "rabbitmq.username", watch = false)

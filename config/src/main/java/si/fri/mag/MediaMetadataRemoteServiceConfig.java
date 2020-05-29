@@ -8,7 +8,7 @@ import javax.enterprise.context.ApplicationScoped;
 @ApplicationScoped
 @ConfigBundle("appproperties")
 public class MediaMetadataRemoteServiceConfig {
-    @ConfigValue(value = "services.mediametadata.url", watch = true)
+    @ConfigValue(value = "services.mediametadata.url", watch = false)
     private String mediaMetadataUrl;
 
     @ConfigValue(value = "services.mediametadata.endpoints.newmediametadata", watch = false)

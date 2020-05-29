@@ -8,7 +8,7 @@ import javax.enterprise.context.ApplicationScoped;
 @ApplicationScoped
 @ConfigBundle("appproperties")
 public class MediaChunksRemoteServiceConfig {
-    @ConfigValue(value = "services.mediachunks.url", watch = true)
+    @ConfigValue(value = "services.mediachunks.url", watch = false)
     private String mediaChunksUrl;
 
     public String getMediaChunksUrl() {
