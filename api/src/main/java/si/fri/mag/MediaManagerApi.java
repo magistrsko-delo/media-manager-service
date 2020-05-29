@@ -1,5 +1,7 @@
 package si.fri.mag;
 
+import com.kumuluz.ee.health.HealthRegistry;
+import com.kumuluz.ee.health.enums.HealthCheckType;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import si.fri.mag.controllers.MainController;
 import si.fri.mag.controllers.RootController;
@@ -25,6 +27,8 @@ public class MediaManagerApi extends Application {
         resources.add(ForbiddenExceptionMapper.class);
         resources.add(InternalServerErrorExceptionMapper.class);
         resources.add(NotFoundExceptionMapper.class);
+        HealthRegistry.getInstance().register(MediaChunksServiceCheck.class.getSimpleName(), new MediaChunksServiceCheck(), HealthCheckType.LIVENESS);
+        HealthRegistry.getInstance().register(AwsServiceCheck.class.getSimpleName(), new AwsServiceCheck(), HealthCheckType.LIVENESS);
         return resources;
     }
 }
