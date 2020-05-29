@@ -16,7 +16,7 @@ public class AwsServiceCheck implements HealthCheck {
     public HealthCheckResponse call() {
         AWSRemoteServiceConfig awsRemoteServiceConfig = CDI.current().select(AWSRemoteServiceConfig.class).get();
 
-        System.out.println(awsRemoteServiceConfig.getAwsStorageUrl() + "health");
+        // System.out.println(awsRemoteServiceConfig.getAwsStorageUrl() + "health");
 
         try {
             HttpURLConnection connection = (HttpURLConnection) new URL(awsRemoteServiceConfig.getAwsStorageUrl() + "health").openConnection();

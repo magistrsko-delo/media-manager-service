@@ -14,7 +14,7 @@ public class MediaChunksServiceCheck implements HealthCheck {
     public HealthCheckResponse call() {
         MediaChunksRemoteServiceConfig configMediaChunks = CDI.current().select(MediaChunksRemoteServiceConfig.class).get();
 
-        System.out.println(configMediaChunks.getMediaChunksUrl() + "health");
+        // System.out.println(configMediaChunks.getMediaChunksUrl() + "health");
 
         try {
             HttpURLConnection connection = (HttpURLConnection) new URL(configMediaChunks.getMediaChunksUrl() + "health").openConnection();
