@@ -16,16 +16,18 @@ public class AwsServiceCheck implements HealthCheck {
     public HealthCheckResponse call() {
         AWSRemoteServiceConfig awsRemoteServiceConfig = CDI.current().select(AWSRemoteServiceConfig.class).get();
 
+        System.out.println(awsRemoteServiceConfig.getAwsStorageUrl() + "health");
+
         try {
-            HttpURLConnection connection = (HttpURLConnection) new URL(awsRemoteServiceConfig.getAwsStorageUrl() + "/health").openConnection();
+            HttpURLConnection connection = (HttpURLConnection) new URL(awsRemoteServiceConfig.getAwsStorageUrl() + "health").openConnection();
             connection.setRequestMethod("HEAD");
 
             if (connection.getResponseCode() == 200) {
-                return HealthCheckResponse.builder().withData("url", awsRemoteServiceConfig.getAwsStorageUrl() + "/health").name(AwsServiceCheck.class.getSimpleName()).up().build();
+                return HealthCheckResponse.builder().withData("url", awsRemoteServiceConfig.getAwsStorageUrl() + "health").name(AwsServiceCheck.class.getSimpleName()).up().build();
             }
         } catch (Exception exception) {
             LOG.severe(exception.getMessage());
         }
-        return HealthCheckResponse.builder().withData("url", awsRemoteServiceConfig.getAwsStorageUrl() + "/health").name(AwsServiceCheck.class.getSimpleName()).down().build();
+        return HealthCheckResponse.builder().withData("url", awsRemoteServiceConfig.getAwsStorageUrl() + "health").name(AwsServiceCheck.class.getSimpleName()).down().build();
     }
 }
