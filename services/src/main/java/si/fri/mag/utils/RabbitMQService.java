@@ -17,6 +17,7 @@ import java.util.concurrent.TimeoutException;
 public class RabbitMQService {
     private static String CHUNKS_QUEUE_NAME = "";
     private static String IMAGE_QUEUE_NAME = "";
+    private static String VIDEO_ANALYSIS_QUEUE_NAME = "";
 
     @Inject
     private RabbitMQConfig rabbitMQConfig;
@@ -27,6 +28,7 @@ public class RabbitMQService {
     private void init(){
         CHUNKS_QUEUE_NAME = rabbitMQConfig.getChunksQueueName();
         IMAGE_QUEUE_NAME = rabbitMQConfig.getImageQueueName();
+        VIDEO_ANALYSIS_QUEUE_NAME = rabbitMQConfig.getVideoAnalysisQueue();
         factory = new ConnectionFactory();
         factory.setHost(rabbitMQConfig.getHost());
         factory.setUsername(rabbitMQConfig.getUsername());
@@ -56,6 +58,21 @@ public class RabbitMQService {
             channel.queueDeclare(IMAGE_QUEUE_NAME, true, false, false, null);
 
             channel.basicPublish("", IMAGE_QUEUE_NAME,
+                    MessageProperties.PERSISTENT_TEXT_PLAIN,
+                    message.getBytes("UTF-8"));
+        } catch (TimeoutException | IOException e) {
+            throw new InternalServerErrorException(e.getMessage());
+        }
+    }
+
+    public void sendVideoAnalysisQueueMessage(String message) {
+        try (Connection connection = factory.newConnection();
+             Channel channel = connection.createChannel()
+        )
+        {
+            channel.queueDeclare(VIDEO_ANALYSIS_QUEUE_NAME, true, false, false, null);
+
+            channel.basicPublish("", VIDEO_ANALYSIS_QUEUE_NAME,
                     MessageProperties.PERSISTENT_TEXT_PLAIN,
                     message.getBytes("UTF-8"));
         } catch (TimeoutException | IOException e) {

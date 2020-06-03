@@ -14,6 +14,9 @@ public class RabbitMQConfig {
     @ConfigValue(value = "rabbitmq.image-queue-name", watch = false)
     private String imageQueueName;
 
+    @ConfigValue(value = "rabbitmq.video-analysis-queue-name", watch = false)
+    private String videoAnalysisQueue;
+
     @ConfigValue(value = "rabbitmq.host", watch = false)
     private String host;
 
@@ -43,6 +46,10 @@ public class RabbitMQConfig {
         return username;
     }
 
+    public String getVideoAnalysisQueue() {
+        return videoAnalysisQueue;
+    }
+
     public void setHost(String host) {
         this.host = host;
     }
@@ -61,5 +68,9 @@ public class RabbitMQConfig {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public void setVideoAnalysisQueue(String videoAnalysisQueue) {
+        this.videoAnalysisQueue = videoAnalysisQueue;
     }
 }

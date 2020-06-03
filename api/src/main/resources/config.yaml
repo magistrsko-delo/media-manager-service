@@ -55,6 +55,7 @@ appproperties:
   rabbitmq:
     chunks-queue-name: MEDIA_CHUNKS_QUEUE
     image-queue-name: IMAGE_QUEUE
+    video-analysis-queue-name: VIDEO_ANALYSIS_QUEUE
     host: localhost
     username: uros
     password: uros123

@@ -9,6 +9,7 @@ import org.apache.commons.io.FileUtils;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.mp4parser.IsoFile;
 import si.fri.DTO.NewMediaMetadata;
+import si.fri.DTO.VideoAnalysisQueueMessage;
 import si.fri.DTO.requests.MediaImageRequest;
 import si.fri.DTO.requests.NewMediaResponseData;
 import si.fri.mag.utils.RabbitMQService;
@@ -71,9 +72,13 @@ public class MediaManagerService {
 
             @Override
             public void onNext(AwsstorageService.UploadResponse value) {
-                System.out.println("SENDING TO WORKER");
+                System.out.println("SENDING TO WORKER: " + newCreatedMedia.getMediaId());
+                VideoAnalysisQueueMessage videoAnalysisQueueMessage = new VideoAnalysisQueueMessage();
+                videoAnalysisQueueMessage.setMediaId(newCreatedMedia.getMediaId());
+
                 Gson gson = new Gson();
                 rabbitMQService.sendChunksQueueMessage(gson.toJson(newCreatedMedia));
+                rabbitMQService.sendVideoAnalysisQueueMessage(gson.toJson(videoAnalysisQueueMessage));
             }
 
             @Override
