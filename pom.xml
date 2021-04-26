@@ -25,7 +25,7 @@
         <com.google.code.gson-vesrion>2.8.5</com.google.code.gson-vesrion>
         <jersey-media-multipart-version>2.28</jersey-media-multipart-version>
         <kumuluzee-config.version>1.2.1</kumuluzee-config.version>
-        <commons-io-version>2.6</commons-io-version>
+        <commons-io-version>2.7</commons-io-version>
         <org.mp4parser-version>1.9.41</org.mp4parser-version>
         <amqp-client-version>5.8.0</amqp-client-version>
         <apache-http-clinet-version>4.5.2</apache-http-clinet-version>
